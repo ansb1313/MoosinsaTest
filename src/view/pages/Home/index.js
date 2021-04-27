@@ -1,18 +1,14 @@
-import React from 'react'
-import styled from 'styled-components';
-import Visual from "../../components/Section/Visual";
+import React from "react";
+import styled from "styled-components";
+import MainContainer from "../../container/MainContainer";
 
 const Home = () => {
-    
     return (
-        <Container>
-        </Container>
-    )
-}
+    <Container>
+        <MainContainer/>
+    </Container>);
+};
 
-
-const Container = styled.div`
-    
-`;
+const Container = styled.div``;
 
 export default Home;

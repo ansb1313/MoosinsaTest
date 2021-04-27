@@ -1,228 +1,196 @@
 import moment from "moment";
 import "moment/locale/ko";
-import { FLEXIBLE_SIDE_MENU_PATHNAME, isFlexibleSideMenuPathname } from "../constants/Consts";
-
+import _ from "lodash";
 moment.locale("ko");
 
-const THOUSAND_COMMA_REGEX = /(\d)(?=(\d{3})+\b)/g;
-
-export const range = (a, b) => {
-    let result = [];
-    for (let i = a; i < b; i++) {
-        result.push(i);
-    }
-    return result;
-};
-
-export const dateFromNow = (date) => {
-    return moment(date).fromNow();
-};
-
-export const findKeys = (m, ...keys) => {
-    let result = {};
-    m.forEach((v, k) => keys.includes(k) && (result[k] = v));
-    return result;
-};
-
-export const omit = (obj, ...keys) => {
-    let result = Object.assign({}, obj);
-    keys.forEach((key) => delete result[key]);
-    return result;
-};
-
-export const urlHostname = (data) => {
-    let a = document.createElement("a");
-    a.href = data;
-    return a.hostname;
-};
-
-export const yearRange = (from, to) => {
-    let diff = to - from;
-    let diffs = range(0, diff + 1);
-    return diffs.map((d) => moment(from, "YYYY").add(d, "year").format("YYYY"));
-};
-
-export const thousandNumberFormat = (n) => {
-    if (typeof n === "number") return n.toString().replace(THOUSAND_COMMA_REGEX, "$1,");
-
-    if (typeof n === "string" || n instanceof String) return n.replace(THOUSAND_COMMA_REGEX, "$1,");
-};
-
-export const invertObject = (obj) => {
-    let result = {};
-    Object.entries(obj).forEach(([k, v]) => {
-        result[v] = k;
-    });
-
-    return result;
-};
-
-export const chunk = (arr, chunkSize, cache = []) => {
-    const tmp = [...arr];
-    while (tmp.length) cache.push(tmp.splice(0, chunkSize));
-    return cache;
-};
-
-export const timerFormat = (timer) => {
-    let sec = timer % 60;
-    let min = Math.floor(timer / 60);
-    return `${min}:${sec}`;
-};
-
-export const tenThousandFormat = (n) => {
-    return Math.floor(n / 10000);
-};
-
-export const scrollToContent = (el) => {
-    const oft = el.offsetTop - 200;
-    window.scrollTo(0, oft);
+export const placementDirection = (i) => {
+  //index에 따라 true, false
+  if (i % 2 !== 0) {
+    return true;
+  }
 };
 
 // watch container
 
-export const videoDetailPublishedAt = (data) => {
-    let publishedArr, publishedAt;
+// export const onWheelTop = _.debounce((e, endPoint, pageIndex) => {
+//   if (e.deltaY < 0) {
+//     if (pageIndex > endPoint) setPageIndex((v) => v - 100);
+//     if (pageIndex <= endPoint) setPageIndex(endPoint);
+//   }
+// }, 150);
 
-    if (data) {
-        publishedArr = data.split("-");
-        publishedAt = publishedArr && ` ${publishedArr[0]}. ${publishedArr[1]}. ${publishedArr[2].slice(0, publishedArr[2].indexOf("T"))}`;
-    }
-    return publishedAt;
-};
+// export const onWheelBottom = _.debounce((e, endPoint, pageIndex) => {
+//   if (e.deltaY > 0) {
+//     if (pageIndex < endPoint) setPageIndex((v) => v + 100);
+//     if (pageIndex > endPoint - 100) setPageIndex(endPoint);
+//     console.log("bottom");
+//   }
+// }, 150);
 
-export const viewCountCommaMark = (data) => {
-    if (data) {
-        return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    } else {
-        return "0";
-    }
-};
+// export const onWheelLeft = _.debounce((e, endPoint, horizontalPage) => {
+//   if (e.deltaY < 0) {
+//     if (horizontalPage > endPoint) setHorizontalValue((v) => v - 100);
+//     if (horizontalPage <= endPoint) setHorizontalValue(0);
+//   }
+// }, 150);
 
-export const LikeDislikeCount = (data) => {
-    let num;
-    if (!data) return "0";
-    if (data && 10000 > data && data / 1000 > 1) {
-        num = (data / 1000).toFixed(1) + "천";
-    } else if (data && data / 10000 > 1) {
-        num = (data / 10000).toFixed(1) + "만";
-    } else {
-        num = data;
-    }
-    return num;
-};
+// export const onWheelRight = _.debounce((e, endPont, horizontalPage) => {
+//   if (e.deltaY > 0) {
+//     console.log("e.deltaYYY", e.deltaY);
+//     if (horizontalPage < endPont) setHorizontalValue((v) => v + 100);
+//     if (horizontalPage > endPont - 100) setHorizontalValue(endPont);
+//   }
+// }, 150);
 
-export const DetailRelatedViewCount = (data) => {
-    let num;
-    if (!data) return "0";
-    if (data && 10000 > data && data / 1000 > 1) {
-        num = (data / 1000).toFixed(1) + "천";
-    } else if (data && data / 10000 > 1) {
-        num = (data / 10000).toFixed(0) + "만";
-    } else {
-        num = data;
-    }
-    return num;
-};
+// scroll Test
 
-export const subscriberCount = (data) => {
-    let num;
-    if (!data) return "0";
-    if (data && data / 10000 > 1) {
-        num = (data / 10000).toFixed(0) + "만";
-    } else {
-        num = data;
-    }
-    return num;
-};
+// import React, {useState, useRef, useEffect} from "react";
+// import {useSelector} from "react-redux";
+// import {useCallback} from "react";
+// import cn from "classnames";
+// import _ from "lodash";
+// import styled from "styled-components";
+// import ItemList from "../components/MainItemList/ItemList";
+// import {appActions} from "../../redux/ActionCreators";
 
-export const LikeCountComma = (data) => {
-    let num;
-    if (!data) return "0";
-    if (data < 10000 && data / 1000 > 1) {
-        return (num = (data / 1000).toFixed(1) + "천");
-    } else if (data / 10000 > 1) {
-        return (num = (data / 10000).toFixed(1) + "만");
-    } else {
-        return (num = data);
-    }
-    return num;
-};
+// const MainContainer = () => {
+//   const {pageValue} = useSelector((state) => state.app);
+//   const [aab, setAab] = useState(0);
+//   const [pagePositon, setPagePositon] = useState(false)
+//   const conRef = useRef(null);
+//   const test3Ref = useRef(null);
 
-export const isFlexibleSideMenu = (pathname) => {
-    const r = FLEXIBLE_SIDE_MENU_PATHNAME.filter((item) => item === pathname);
-    return r.length > 0;
-};
+//   const onScroll = () => {
+//     window.addEventListener(
+//       "scroll",
+//       _.throttle(function (e) {
+//         // const windowScrollPoint = window.scrollY;
+//         // console.log("windowScrollPoint", windowScrollPoint);
+//       }, 500)
+//     );
+//   };
 
-export const setPlayTime = (data) => {
-    if (!data) return null;
-    let proData = data.replace("PT", "");
-    let hour, minute, second;
-    let playTime = [];
+//   useEffect(() => {
+//     onScroll();
+//   });
 
-    if (proData.indexOf("H") !== -1) hour = proData.slice(0, proData.indexOf("H"));
-    if (proData.indexOf("M") !== -1) minute = proData.slice(proData.indexOf("H") + 1, proData.indexOf("M"));
-    if (proData.indexOf("S") !== -1) {
-        if (minute) {
-            second = proData.slice(proData.indexOf("M") + 1, proData.indexOf("S"));
-        } else {
-            second = proData.slice(proData.indexOf("H") + 1, proData.indexOf("S"));
-        }
-    }
+//   // const sclEvent = () => {
+//   //   conRef.current.dispatchEvent(new Event('scroll'))
+//   // }
 
-    if (second?.length < 2) second = `0${second}`;
-    if (second?.length == undefined) second = "00";
-    let minuteLength = minute?.length < 2;
-    if (hour && minuteLength) minute = `0${minute}`;
+//   // useEffect(() => {
+//   //   sclEvent();
+//   // },[]);
 
-    if (hour) {
-        if (minute && second) playTime = [hour, minute, second];
-        if (minute == undefined) playTime = [hour, "00", second];
-    }
-    if (hour == undefined) playTime = [minute, second];
-    if (hour == undefined && minute == undefined) playTime = ["0", second];
+//   useEffect(() => {
+//     console.log("aab", aab);
+//   }, [aab]);
 
-    let time = playTime.join(` : `);
+//   // let scrollToRef = () => {
+//   //   pageValueV()
+//   //  if(pageValue > 100){
+//   //   conRef.current.scrollIntoView({behavior:"smooth"})
+//   //   console.log('click')
+//   //  }
+//   // }
 
-    return time;
-};
+//   const wheelDirection = (e) => {
+//     let val = aab;
+//     let test2location = conRef?.current?.offsetTop;
+//     let test3location = test3Ref?.current?.offsetTop;
+//     if (e.deltaY < 0) {
+//       console.log("scrolling up");
+//       // console.log('e.deltaY', e.deltaY)
+//       if (aab > 0) setAab((v) => v - 100);
+//       if (aab <= 0) setAab(0);
+//     } else if (e.deltaY > 0) {
+//       console.log("scrolling downs");
+//       const windowScrollPoint = window.scrollY;
+//       console.log("sc", windowScrollPoint);
+//       if (aab < 300) setAab((v) => v + 100);
+//       if (aab >= 300) setAab(300);
+//       // if (aab > 10)
+//       //   window.scrollTo({top: test3location, behavior: "smooth"});
+//         // console.log('e.deltaY', e.deltaY)
+//     }
 
-export const classification = (data) => {
-    if (!data) return null;
-    const dataArray = data?.split("\n");
-    const text = dataArray.map((item, i) => {
-        const itemWords = item.split(" ");
-        const text = itemWords
-            .map((item) => {
-                if (item.indexOf("http") !== -1) {
-                    return `<a href="${item}">${item}</a>`;
-                }
-                if (item.indexOf("#") !== -1) {
-                    return `<a href="https://www.youtube.com/hashtag/${item}">${item}</a>`;
-                }
-                if (item.indexOf("www") !== -1) {
-                    return `<a href="https://${item}" target="_blank">${item}</a>`;
-                }
-                return item;
-            })
-            .join(" ");
+//     // if (val == 100 ) {
+//     //   console.log("window.scrollY", window.scrollY);
+//     //   window.scrollTo({top: test2location, behavior: "smooth"});
+//     // }
+//     // if (val > 50 && val <= 200 ) {
+//     //   console.log("window.scrollY", window.scrollY);
+//     //   window.scrollTo({top: '100vh', behavior: "smooth"});
+//     // }
+//   };
 
-        return (
-            <div className="wrap" key={i}>
-                <p dangerouslySetInnerHTML={{ __html: text }} />
-            </div>
-        );
-    });
+//   const onClick = () => {
+//     setPagePositon(!pagePositon)
+//   }
 
-    return text;
-};
+//   // className={cn("moo",{isActive:aab == 200})}
+//   return (
+//     <Container onWheel={wheelDirection} onClick={onClick} vh={`-${aab}vh`}>
+//       <div className={cn("test one")} ref={conRef}>
+//         page1
+//       </div>
+//       <div className="test 2" ref={test3Ref}>
+//         page2
+//       </div>
+//       <div className="test 3">page3</div>
+//       <div className="test 4">page4
+//         <h1 className={cn('yoshi',{isYoshi:aab==300})}>요시</h1>
 
-export const videoDetailtags = (data) => {
-    if (!data) return null;
-    const dataArr = data.split(" ");
-    const text = dataArr.filter((item) => item.indexOf("#") !== -1);
-    const tags = text.map((item) => {
-        return `<a href="https://www.youtube.com/hashtag/${item}">${item}</a>`;
-    });
+//       </div>
+//     </Container>
+//   );
+// };
 
-    return tags.join(" ");
-};
+// const Container = styled.div`
+//   overflow: hidden;
+//   position: absolute;
+//   left: 0;
+//   right: 0;
+//   bottom: 0;
+//   transition:all 0.65s cubic-bezier(.93,0,.63,0.1);
+//   top:${props => props.vh};
+//   &.isActive{
+
+//   }
+//   .test {
+//     height: 100vh;
+//     border: solid 1px #111;
+//     &.one {
+//       background: #eee;
+//     }
+//     .yoshi{
+//       &.isYoshi{
+//         font-weight: bold;
+//       }
+//     }
+//   }
+// `;
+
+// const onHorizontalWheel = (e) => {
+//     if (e.deltaY < 0) {
+//       if (horizontalValue > 0) setHorizontalValue((v) => v - 100);
+//       if (horizontalValue <= 0) setHorizontalValue(0);
+//     } else if (e.deltaY > 0) {
+//       if (horizontalValue < 300) setHorizontalValue((v) => v + 100);
+//       if (horizontalValue > 200) setHorizontalValue(300);
+//     }
+//   };
+
+// const wheelDirection = (e) => {
+//     if (e.deltaY < 0) {
+//     //   console.log('e.deltaY', e.deltaY)
+//       if (page > 0) setPage((v) => v - 100);
+//       if (page <= 0) setPage(0);
+//     } else if (e.deltaY > 0) {
+//         // console.log('e.deltaY', e.deltaY)
+//       if (page < 300) setPage((v) => v + 100);
+//       if (page > 200) setPage(300);
+//     }
+// };
+
+// export default MainContainer;
